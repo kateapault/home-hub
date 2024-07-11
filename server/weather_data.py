@@ -13,7 +13,7 @@ LONGITUDE = -77.051940
 # weather_json = r_weather.json()
 
 def generate_test_data():
-    return {"text": "hi test yes :)"}
+    return '{"text": "hi test yes :)"}'
 
 def generate_moon_phase_data():
     moon_phase_data = {}

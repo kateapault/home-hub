@@ -2,7 +2,7 @@
 
 # MVP
 ## TODO
-[] set up basic flask backend w tide phase & test function
+[x] set up basic flask backend w tide phase & test function
 [] set up basic vue frontend w time & tide phase & test display
 [] set up broker w tide phase & test topic
 [] set up docker to run it all at once
@@ -11,8 +11,8 @@
 [] 
 
 ### notes
-- what to use for broker??
-    - mosquitto?
+- using mosquitto
+    - front end keeps disconnecting????
     - 
 ### FE
 - cute header

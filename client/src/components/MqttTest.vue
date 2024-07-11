@@ -13,12 +13,19 @@ export default {
     methods: {
         subscribe() {
             this.$mqtt.subscribe("weather/test", (data) => {
-                this.message = data;
+                console.log('this should be showing up....')
+                console.log(`got data: ${data}`);
+                let response = JSON.parse(data)
+                this.setMessage(response.text);
             })
+        },
+        setMessage(newMessage) {
+            this.message = newMessage;
         }
     },
-    onMount() {
-        subscribe();
+    mounted() {
+        // this.$mqtt.connect();
+        this.subscribe();
     }
 }
 </script>
