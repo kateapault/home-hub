@@ -1,6 +1,7 @@
 import datetime
 import ephem
 import requests
+import json
 
 from helpers import convert_to_celcius
 from mapping import weather_descriptions, weather_emojis, map_degree_to_direction, map_moon_icon_and_phase
@@ -38,7 +39,7 @@ def generate_moon_phase_data():
     moon_phase_data["moon_phase"] = moon_data["moon_phase"]
     moon_phase_data["moon_icon"] = moon_data["moon_icon"]
 
-    return moon_phase_data
+    return json.dumps(moon_phase_data)
 
 def generate_tide_data():
     begin_date = datetime.date.today().strftime('%Y%m%d')

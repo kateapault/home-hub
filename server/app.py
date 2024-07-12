@@ -16,6 +16,9 @@ HOURLY_WEATHER_CHANNEL = "weather/hourly"
 WEEKLY_WEATHER_CHANNEL = "weather/week"
 TEST_CHANNEL = "weather/test"
 
+TIDE_REFRESH_INTERVAL = 60 * 60 # seconds; 1 hr
+MOON_REFRESH_INTERVAL = 10 # seconds
+
 load_dotenv()
 
 app = Flask(__name__)
@@ -52,12 +55,12 @@ def handle_connect(client, userdata, flags, rc):
     print(f"client {client} | userdata {userdata} | flags {flags} | rc {rc}")
 
 
-@scheduler.task('interval',id='test_job',seconds=5)
-def push_test_data():
-    mqtt.publish(TEST_CHANNEL, generate_test_data())
-    print(f'posted to test channel at {datetime.utcnow()}')
+# @scheduler.task('interval',id='test_job',seconds=5)
+# def push_test_data():
+#     mqtt.publish(TEST_CHANNEL, generate_test_data())
+#     print(f'posted to test channel at {datetime.utcnow()}')
 
-
+@scheduler.task('interval', id='moon', seconds=MOON_REFRESH_INTERVAL)
 def push_moon_data():
     mqtt.publish(MOON_CHANEL, generate_moon_phase_data())
 

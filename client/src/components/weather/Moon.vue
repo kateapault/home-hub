@@ -6,65 +6,59 @@
                 v-if="fullMoonIsNext"
                 class="moon-next"
             >
-                <div>🌕 {{ formatDate(nextFullMoon) }}</div>
-                <div>🌑 {{ formatDate(nextNewMoon) }}</div>
+                <div>🌕 {{ nextFullMoon }}</div>
+                <div>🌑 {{ nextNewMoon }}</div>
             </div>
             <div
                 v-else
                 class="moon-next"
             >
-                <div>🌑 {{ formatDate(nextNewMoon) }}</div>
-                <div>🌕 {{ formatDate(nextFullMoon) }}</div>
+                <div>🌑 {{ nextNewMoon }}</div>
+                <div>🌕 {{ nextFullMoon }}</div>
             </div>
         </div>
         <div class="moon-phase">{{ moonPhase }}</div>
+        hi moon
     </div>
 </template>
 
-<script>
-import axios from 'axios';
+<script setup>
+import { ref } from 'vue';
+import { $mqtt } from 'vue-paho-mqtt';
+// import { formatDate } from '..';
+
+const emoji = ref("hi");
+const moonPhase = ref("moon phase");
+const nextFullMoon = ref('next');
+const nextNewMoon = ref('new');
+
+const fullMoonIsNext = true;
+
 const dayMapping = {
-    0: 'Sun',
-    1: 'Mon',
-    2: 'Tue',
-    3: 'Wed',
-    4: 'Thu',
-    5: 'Fri',
-    6: 'Sat'
-}
-export default {
-    data() {
-        return {
-            emoji: "new",
-            moonPhase: "",
-            nextFullMoon: "",
-            nextNewMoon: ""
-        }
-    },
-    methods: {
-        async getMoonInfo() {
-            let url = 'http://127.0.0.1:5000/data/moon'
-            let resp = await axios.get(url)
-            this.moonPhase = resp.data.moon_phase
-            this.emoji = resp.data.moon_icon
-            this.nextNewMoon = Date.parse(resp.data.next_new_moon)
-            this.nextFullMoon = Date.parse(resp.data.next_full_moon)
-        },
-        formatDate(timestamp) {
-            let d = new Date(timestamp)
-            return `${dayMapping[d.getDay()]}, ${d.getMonth() + 1}/${d.getDate()}`
-        }
-    },
-    computed: {
-        fullMoonIsNext() {
-            return this.nextFullMoon && this.nextFullMoon < this.nextNewMoon
-        }
-    },
-    mounted() {
-        this.getMoonInfo()
-    }
+    0: 'Sunday',
+    1: 'Monday',
+    2: 'Tuesday',
+    3: 'Wednesday',
+    4: 'Thursday',
+    5: 'Friday',
+    6: 'Saturday',
+};
 
+function formatDate(timestamp) {
+    let d = new Date(timestamp);
+    return `${dayMapping[d.getDay()]}, ${d.getMonth() + 1}/${d.getDate()}`
+};
 
-}
+$mqtt.subscribe("weather/moon", (data) => {
+    console.log(data);
+    let response = JSON.parse(data);
+    // console.log(response.emoji);
+    // this.emoji = response.moon_icon;
+    moonPhase.value = response.moon_phase;
+    // console.log(new Date(Date.now()));
+    // console.log(formatDate(Date.now()));
+    nextFullMoon.value = formatDate(Date.parse(response.next_full_moon));
+    nextNewMoon.value = formatDate(Date.parse(response.next_new_moon));
+})
 
 </script>
