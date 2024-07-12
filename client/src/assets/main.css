@@ -156,4 +156,6 @@ html {
 .weather-day-container {
   padding: 5px;
   border: 1px solid purple;
+  display: flex;
+  flex-direction: column;
 }

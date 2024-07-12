@@ -4,7 +4,7 @@ import requests
 import json
 
 from helpers import convert_to_celcius
-from dummy_data import weather_data
+from dummy_data import static_weather_data
 from mapping import weather_descriptions, weather_emojis, map_degree_to_direction, map_moon_icon_and_phase
 
 
@@ -82,14 +82,12 @@ def generate_tide_data():
     }
     return json.dumps(tide_data)
 
-daily_weather_data = {}
-
 def get_current_weather():
     r_weather = requests.get('https://api.open-meteo.com/v1/forecast?latitude=38.81455&longitude=-77.05194&current=temperature_2m,relativehumidity_2m,apparent_temperature,precipitation,weathercode,windspeed_10m,winddirection_10m,windgusts_10m&hourly=temperature_2m,relativehumidity_2m,dewpoint_2m,apparent_temperature,precipitation_probability,precipitation,weathercode&daily=weathercode,temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,sunrise,sunset,precipitation_sum,precipitation_probability_max&temperature_unit=fahrenheit&windspeed_unit=mph&precipitation_unit=inch&timezone=America%2FNew_York')
     weather_json = r_weather.json()
     # print(weather_json)
     # to avoid a jillion calls:
-    # weather_json = weather_data
+    # weather_json = static_weather_data
     current_weather = {
         "temperature_f": weather_json["current"]["temperature_2m"],
         "temperature_c": convert_to_celcius(weather_json["current"]["temperature_2m"]),
@@ -106,12 +104,14 @@ def get_current_weather():
     return json.dumps(current_weather)
 
 
-def generate_weekly_weather():
-    weather_json = daily_weather_data['daily']
+def generate_weather_week():
+    r_weather = requests.get('https://api.open-meteo.com/v1/forecast?latitude=38.81455&longitude=-77.05194&current=temperature_2m,relativehumidity_2m,apparent_temperature,precipitation,weathercode,windspeed_10m,winddirection_10m,windgusts_10m&hourly=temperature_2m,relativehumidity_2m,dewpoint_2m,apparent_temperature,precipitation_probability,precipitation,weathercode&daily=weathercode,temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,sunrise,sunset,precipitation_sum,precipitation_probability_max&temperature_unit=fahrenheit&windspeed_unit=mph&precipitation_unit=inch&timezone=America%2FNew_York')
+    weather_json = r_weather.json()
+    # weather_json = static_weather_data['daily']
 
-    daily_weather = []
+    weather_week = []
     for i in range(len(weather_json['time'])):
-        daily_weather += [{
+        weather_week += [{
             "date": weather_json['time'][i],
             "precipitation_chance": weather_json['precipitation_probability_max'][i],
             "sunrise": weather_json['sunrise'][i],
@@ -123,4 +123,4 @@ def generate_weekly_weather():
             "minTempF": weather_json['temperature_2m_min'][i],
             "minTempC": convert_to_celcius(weather_json['temperature_2m_min'][i]),
         }]
-    return daily_weather
+    return json.dumps(weather_week)
