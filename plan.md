@@ -5,21 +5,23 @@
 [x] set up basic flask backend w moon phase & test function
 [x] set up basic vue frontend w time & moon phase & test display
 [x] set up broker w moon phase & test topic
-[] set up docker to run it all at once
 [x] make flask send new moon phase every 12 hour & send new test every 10 sec 
 [x] remove test once test is working
 [x] add tide
 [] straighten out weather language
-[] add current weather
+[x] add current weather
 [] add hourly weather
 [] add weekly weather
 [] set up values at startup
+[] make it pretty
+[] set up docker to run it all at once
 
 ### notes
 - using mosquitto
-    - front end disconnects when there is an error and seems to sometimes swallow the error message when doing so
+    - front end disconnects when there is an error and seems to swallow the error messages when doing so
     - 
-### FE
+
+### FE components
 - cute header
 - body/container for all the information
 - current time - can update itself w/o backend input
@@ -31,16 +33,16 @@
 - daily weather next 7 days (update every 8 or 12h)
 - astrology thing possibly? no idea what ought to be in this tho
 
-#### starting
-- vue tutorial
-- set up very basic vue app with moon phase component & time (bc multiple components)
-- set up functions in flask & get data to mqtt topics
-- update front end components based on topics
-- once that's displaying/functioning properly, add in weather and the rest
+#### tests
+- not thorough I know
+- BE: add integration test for each endpoint
+- 
+
 #### serving
-- look up how to get this all to run on raspberry pi - docker needed?
+- look up how to get this all to run on raspberry pi - docker needed presumably?
 - look up how to get this to update itself when live/prod/master branch gets updated
-- actually set up raspberry pi & monitor
+- set up github to run tests on push
+- set up raspberry pi & monitor
 
 # EXPANSIONS
 ## mini feature - subway times
