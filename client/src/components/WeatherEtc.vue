@@ -1,20 +1,19 @@
 <template>
     <div class="section">
         <div class="weatheretc-container-daily" style="display: flex;">
-            <DailyWeather />
+            <CurrentWeather />
             <div style="display: flex;flex-direction: column;">
                 <Moon />
-                <!-- <Tide /> -->
+                <Tide />
             </div>
         </div>
-        <WeeklyWeather />
+        <WeatherWeek />
     </div>
 </template>
 
 <script setup>
-// import WeeklyWeather from './weather/WeeklyWeather.vue';
-import DailyWeather from './weather/DailyWeather.vue';
+import CurrentWeather from './weather/CurrentWeather.vue';
 import Tide from './weather/Tide.vue';
 import Moon from './weather/Moon.vue';
-// import Moon from './weather/Moon.vue';
+import WeatherWeek from './weather/WeatherWeek.vue';
 </script>

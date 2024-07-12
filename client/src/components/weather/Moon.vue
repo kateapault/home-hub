@@ -3,22 +3,21 @@
         <div class="moon-info">
             <div class="moon-emoji">{{ emoji }}</div>
             <div
-                v-if="fullMoonIsNext"
+                v-if="nextFullMoon < nextNewMoon"
                 class="moon-next"
             >
-                <div>🌕 {{ nextFullMoon }}</div>
-                <div>🌑 {{ nextNewMoon }}</div>
+                <div>🌕 {{ formatDate(nextFullMoon) }}</div>
+                <div>🌑 {{ formatDate(nextNewMoon) }}</div>
             </div>
             <div
                 v-else
                 class="moon-next"
             >
-                <div>🌑 {{ nextNewMoon }}</div>
-                <div>🌕 {{ nextFullMoon }}</div>
+                <div>🌑 {{ formatDate(nextNewMoon) }}</div>
+                <div>🌕 {{ formatDate(nextFullMoon) }}</div>
             </div>
         </div>
         <div class="moon-phase">{{ moonPhase }}</div>
-        hi moon
     </div>
 </template>
 
@@ -29,10 +28,8 @@ import { $mqtt } from 'vue-paho-mqtt';
 
 const emoji = ref("hi");
 const moonPhase = ref("moon phase");
-const nextFullMoon = ref('next');
-const nextNewMoon = ref('new');
-
-const fullMoonIsNext = true;
+const nextFullMoon = ref(Date.now());
+const nextNewMoon = ref(Date.now());
 
 const dayMapping = {
     0: 'Sunday',
@@ -49,16 +46,12 @@ function formatDate(timestamp) {
     return `${dayMapping[d.getDay()]}, ${d.getMonth() + 1}/${d.getDate()}`
 };
 
-$mqtt.subscribe("weather/moon", (data) => {
-    console.log(data);
-    let response = JSON.parse(data);
-    // console.log(response.emoji);
-    // this.emoji = response.moon_icon;
-    moonPhase.value = response.moon_phase;
-    // console.log(new Date(Date.now()));
-    // console.log(formatDate(Date.now()));
-    nextFullMoon.value = formatDate(Date.parse(response.next_full_moon));
-    nextNewMoon.value = formatDate(Date.parse(response.next_new_moon));
-})
+$mqtt.subscribe("weather/moon", (message) => {
+    let data = JSON.parse(message);
+    moonPhase.value = data.moon_phase;
+    emoji.value = data.moon_icon;
+    nextFullMoon.value = Date.parse(data.next_full_moon);
+    nextNewMoon.value = Date.parse(data.next_new_moon);
+});
 
 </script>

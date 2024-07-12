@@ -7,7 +7,7 @@ from datetime import datetime
 
 import os
 
-from weather_data import generate_test_data, generate_moon_phase_data
+from weather_data import generate_test_data, generate_moon_phase_data, generate_tide_data, get_current_weather
 
 TIDE_CHANNEL = "weather/tide"
 MOON_CHANEL = "weather/moon"
@@ -16,8 +16,12 @@ HOURLY_WEATHER_CHANNEL = "weather/hourly"
 WEEKLY_WEATHER_CHANNEL = "weather/week"
 TEST_CHANNEL = "weather/test"
 
-TIDE_REFRESH_INTERVAL = 60 * 60 # seconds; 1 hr
-MOON_REFRESH_INTERVAL = 10 # seconds
+TIDE_REFRESH_INTERVAL = 60 * 30 # seconds; 30 min
+MOON_REFRESH_INTERVAL = 60 * 60 * 12 # seconds; 12 hr
+CURRENT_WEATHER_REFRESH_INTERVAL = 60 * 60 # seconds; 1 hr
+HOURLY_WEATHER_REFRESH_INTERVAL = 60 * 60 # seconds; 1 hr
+WEEKLY_WEATHER_REFRESH_INTERVAL = 60 * 60 * 12 # seconds; 12 hr
+
 
 load_dotenv()
 
@@ -38,17 +42,6 @@ def hello_world():
     return "<p>Hello world</p>"
 
 
-@app.route("/test")
-def test_mqtt():
-    mqtt.publish(TEST_CHANNEL,'{"text": "hi this is from the /test route"}')
-    return "<h1>hi yes sent 'HI TESTING' :)</h1>"
-
-@app.route("/test/moon")
-def send_moon():
-    moon_data = generate_moon_phase_data()
-    mqtt.publish(MOON_CHANEL, str(moon_data))
-    return "hi yes sent moon phase"
-
 @mqtt.on_connect()
 def handle_connect(client, userdata, flags, rc):
     print('connected')
@@ -64,13 +57,13 @@ def handle_connect(client, userdata, flags, rc):
 def push_moon_data():
     mqtt.publish(MOON_CHANEL, generate_moon_phase_data())
 
-
+@scheduler.task('interval', id='tide', seconds=TIDE_REFRESH_INTERVAL)
 def push_tide_data():
-    pass
+    mqtt.publish(TIDE_CHANNEL, generate_tide_data())
 
-
+@scheduler.task('interval', id='current_weather', seconds=CURRENT_WEATHER_REFRESH_INTERVAL)
 def push_current_weather_data():
-    pass
+    mqtt.publish(CURRENT_WEATHER_CHANNEL, get_current_weather())
 
 
 def push_hourly_weather_data():
@@ -78,8 +71,6 @@ def push_hourly_weather_data():
 
 def push_daily_weather_data():
     pass
-
-
 
 
 if __name__ == "__main__":

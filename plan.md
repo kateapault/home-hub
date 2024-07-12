@@ -2,17 +2,22 @@
 
 # MVP
 ## TODO
-[x] set up basic flask backend w tide phase & test function
-[] set up basic vue frontend w time & tide phase & test display
-[] set up broker w tide phase & test topic
+[x] set up basic flask backend w moon phase & test function
+[x] set up basic vue frontend w time & moon phase & test display
+[x] set up broker w moon phase & test topic
 [] set up docker to run it all at once
-[] make flask send new tide phase every hour & send new test every 10 sec 
-[] remove test once test is working
-[] 
+[x] make flask send new moon phase every 12 hour & send new test every 10 sec 
+[x] remove test once test is working
+[x] add tide
+[] straighten out weather language
+[] add current weather
+[] add hourly weather
+[] add weekly weather
+[] set up values at startup
 
 ### notes
 - using mosquitto
-    - front end keeps disconnecting????
+    - front end disconnects when there is an error and seems to sometimes swallow the error message when doing so
     - 
 ### FE
 - cute header

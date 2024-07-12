@@ -21,43 +21,32 @@
     </div>
 </template>
 
-<script>
-import axios from 'axios';
+<script setup>
+import { ref } from 'vue'
+import { $mqtt  } from 'vue-paho-mqtt';
 
-export default {
-    data() {
-        return {
-            tideStatus: "",
-            nextHighTide: "",
-            nextLowTide: "",
-            emojis: ""
-        }
+const tideStatus = ref("status");
+const nextHighTide = ref(Date.now());
+const nextLowTide = ref(Date.now());
+const emojis = ref("emojiiiis");
 
-    },
-    methods: {
-        async getTideInfo() {
-            let url = 'http://127.0.0.1:5000/data/tide'
-            let resp = await axios.get(url)
-            this.tideStatus = resp.data.tide_status
-            this.emojis = resp.data.emojis
-            this.nextHighTide = Date.parse(resp.data.next_high_tide)
-            this.nextLowTide = Date.parse(resp.data.next_low_tide)
-        },
-        formatDate(timestamp) {
-            let d = new Date(timestamp)
-            if (d.getDay() == new Date().getDay()) {
-                return `${d.getHours()}:${d.getMinutes()} today` 
-            }
-            return `0${d.getHours()}:${d.getMinutes()} tomorrow`
-        }
-    },
-    computed: {
-        highTideIsNext() {
-            this.nextHighTide && this.nextHighTide < this.nextLowTide
-        }
-    },
-    mounted() {
-        this.getTideInfo()
+const highTideIsNext = true;
+
+function formatDate(timestamp) {
+    let d = new Date(timestamp)
+    if (d.getDay() == new Date().getDay()) {
+        return `${d.getHours()}:${d.getMinutes()} today` 
     }
+    return `0${d.getHours()}:${d.getMinutes()} tomorrow`
 }
+
+$mqtt.subscribe("weather/tide", (message) => {
+    let data = JSON.parse(message);
+    console.log(message)
+    emojis.value = data.emojis;
+    tideStatus.value = data.tide_status;
+    nextHighTide.value = Date.parse(data.next_high_tide);
+    nextLowTide.value = Date.parse(data.next_low_tide);
+})
+
 </script>

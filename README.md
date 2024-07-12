@@ -15,6 +15,10 @@ to start up front end:
 `npm run dev`
 
 
+## Troubleshooting notes
+The front end MQTT subscription disconnects on error, and sometimes this swallows the error message
+
+
 # ongoing notes
 - for some reason specifying localhost & port 1883 for both vue and python renders them unable to connect, but leaving them off allows connection
 
