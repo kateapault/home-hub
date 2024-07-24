@@ -1,10 +1,13 @@
 <template>
-    <div class="datetime" style="display: flex; justify-content: space-between;">
-        <div id="datetime-time">{{ hour }}:{{ minute }}</div>
+    <div class="datetime">
+        <!-- <div id="datetime-time">{{ hour }}:{{ minute }}</div>
         <div id="datetime-day-date">
             <div id="datetime-day">{{ dayOfWeek }}</div>
-            <div id="datetime-date">{{ month }} {{ day }}</div>
-        </div>
+            <div id="datetime-date">{{ dayOfWeek}}, {{ month }} {{ day }}</div>
+        </div> -->
+        <div id="datetime-day">{{ dayOfWeek }}</div>
+        <div id="datetime-time">{{ hour }}:{{ minute }}</div>
+        <div id="datetime-date">{{ month }} {{ day }}</div>
     </div>
 </template>
 

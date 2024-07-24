@@ -3,9 +3,9 @@ import ephem
 import requests
 import json
 
-from helpers import convert_to_celcius
-from dummy_data import static_weather_data
-from mapping import weather_descriptions, weather_emojis, map_degree_to_direction, map_moon_icon_and_phase
+from .helpers import convert_to_celcius
+from .dummy_data import static_weather_data
+from .mapping import weather_descriptions, weather_emojis, map_degree_to_direction, map_moon_icon_and_phase
 
 
 LATITUDE = 38.814550
@@ -105,9 +105,9 @@ def get_current_weather():
 
 
 def generate_weather_week():
-    r_weather = requests.get('https://api.open-meteo.com/v1/forecast?latitude=38.81455&longitude=-77.05194&current=temperature_2m,relativehumidity_2m,apparent_temperature,precipitation,weathercode,windspeed_10m,winddirection_10m,windgusts_10m&hourly=temperature_2m,relativehumidity_2m,dewpoint_2m,apparent_temperature,precipitation_probability,precipitation,weathercode&daily=weathercode,temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,sunrise,sunset,precipitation_sum,precipitation_probability_max&temperature_unit=fahrenheit&windspeed_unit=mph&precipitation_unit=inch&timezone=America%2FNew_York')
-    weather_json = r_weather.json()
-    # weather_json = static_weather_data['daily']
+    # r_weather = requests.get('https://api.open-meteo.com/v1/forecast?latitude=38.81455&longitude=-77.05194&current=temperature_2m,relativehumidity_2m,apparent_temperature,precipitation,weathercode,windspeed_10m,winddirection_10m,windgusts_10m&hourly=temperature_2m,relativehumidity_2m,dewpoint_2m,apparent_temperature,precipitation_probability,precipitation,weathercode&daily=weathercode,temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,sunrise,sunset,precipitation_sum,precipitation_probability_max&temperature_unit=fahrenheit&windspeed_unit=mph&precipitation_unit=inch&timezone=America%2FNew_York')
+    # weather_json = r_weather.json()['daily']
+    weather_json = static_weather_data['daily']
 
     weather_week = []
     for i in range(len(weather_json['time'])):
@@ -124,3 +124,22 @@ def generate_weather_week():
             "minTempC": convert_to_celcius(weather_json['temperature_2m_min'][i]),
         }]
     return json.dumps(weather_week)
+
+def generate_weather_hours():
+    # r_weather = requests.get('https://api.open-meteo.com/v1/forecast?latitude=38.81455&longitude=-77.05194&current=temperature_2m,relativehumidity_2m,apparent_temperature,precipitation,weathercode,windspeed_10m,winddirection_10m,windgusts_10m&hourly=temperature_2m,relativehumidity_2m,dewpoint_2m,apparent_temperature,precipitation_probability,precipitation,weathercode&daily=weathercode,temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,sunrise,sunset,precipitation_sum,precipitation_probability_max&temperature_unit=fahrenheit&windspeed_unit=mph&precipitation_unit=inch&timezone=America%2FNew_York')
+    # weather_json = r_weather.json()
+    weather_json = static_weather_data['hourly']
+
+    weather_hours = []
+    for i in range(len(weather_json['time'])):
+        weather_hours += {
+            "time": weather_json['time'][i],
+            "temp_f": weather_json['temperature_2m'][i],
+            "temp_c": convert_to_celcius(weather_json['temperature_2m'][i]),
+            "humidity": weather_json['relativehumidity_2m'][i],
+            "precip_chance": weather_json['relativehumidity_2m'][i],
+            "weather_description": weather_descriptions[weather_json['weathercode'][i]],
+            "weather_emoji": weather_emojis[weather_json['weathercode'][i]],
+        }
+
+    return json.dumps(weather_hours)

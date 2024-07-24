@@ -7,20 +7,21 @@ from datetime import datetime
 
 import os
 
-from weather_data import generate_test_data, generate_moon_phase_data, generate_tide_data, get_current_weather, generate_weather_week
+from .weather_data import generate_test_data, generate_moon_phase_data, generate_tide_data, get_current_weather, generate_weather_week, generate_weather_hours
 
 TIDE_CHANNEL = "weather/tide"
 MOON_CHANEL = "weather/moon"
 CURRENT_WEATHER_CHANNEL = "weather/current"
-HOURLY_WEATHER_CHANNEL = "weather/hourly"
+WEATHER_HOURS_CHANNEL = "weather/hours"
 WEATHER_WEEK_CHANNEL = "weather/week"
 TEST_CHANNEL = "weather/test"
 
+
 TIDE_REFRESH_INTERVAL = 60 * 30 # seconds; 30 min
 MOON_REFRESH_INTERVAL = 60 * 60 * 12 # seconds; 12 hr
-# do current & hourly refresh in same method?
-CURRENT_WEATHER_REFRESH_INTERVAL = 60 * 60 # seconds; 1 hr
-HOURLY_WEATHER_REFRESH_INTERVAL = 60 * 60 # seconds; 1 hr
+# CURRENT_WEATHER_REFRESH_INTERVAL = 60 * 60 # seconds; 1 hr
+# WEATHER_HOURS_REFRESH_INTERVAL = 60 * 60 # seconds; 1 hr
+WEATHER_REFRESH_INTERVAL = 60 * 60 # seconds; 1 hr
 WEATHER_WEEK_REFRESH_INTERVAL = 60 * 60 * 12 # seconds; 12 hr
 
 
@@ -62,18 +63,22 @@ def push_moon_data():
 def push_tide_data():
     mqtt.publish(TIDE_CHANNEL, generate_tide_data())
 
-@scheduler.task('interval', id='current_weather', seconds=CURRENT_WEATHER_REFRESH_INTERVAL)
-def push_current_weather_data():
+@scheduler.task('interval', id='current_weather', seconds=WEATHER_REFRESH_INTERVAL)
+def push_weather_data():
     mqtt.publish(CURRENT_WEATHER_CHANNEL, get_current_weather())
 
 @scheduler.task('interval', id='weather_week', seconds=WEATHER_WEEK_REFRESH_INTERVAL)
 def push_weather_week_data():
     mqtt.publish(WEATHER_WEEK_CHANNEL, generate_weather_week())
 
-def push_hourly_weather_data():
-    pass
+# @scheduler.task('interval', id='weather_hours', seconds=WEATHER_HOURS_REFRESH_INTERVAL)
+# def push_hourly_weather_data():
+#     mqtt.publish(WEATHER_HOURS_CHANNEL, generate_weather_hours())
 
-
+push_moon_data()
+push_tide_data()
+push_weather_data()
+push_weather_week_data()
 
 if __name__ == "__main__":
     app.run()

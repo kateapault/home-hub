@@ -6,8 +6,8 @@
             <div>{{ day.weatherDescription }}</div>
         </div>
         <div>
-            <div>H: {{ day.maxTempC }}C ({{ day.maxTempF }}F)</div>
-            <div>L: {{ day.minTempC }}C ({{ day.minTempF }}F)</div>
+            <div><span class="temp-high">H</span> {{ day.maxTempC }}C ({{ day.maxTempF }}F)</div>
+            <div><span class="temp-low">L</span> {{ day.minTempC }}C ({{ day.minTempF }}F)</div>
         </div>
         <div>{{ day.precipitationChance }}% ☔</div>
         <div>
